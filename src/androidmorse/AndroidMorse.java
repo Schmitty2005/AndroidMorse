@@ -52,7 +52,7 @@ public class AndroidMorse {
 
     
     @SuppressWarnings("FieldMayBeFinal")
-    private java.util.HashMap<Integer, String> levelSets = new java.util.HashMap<>();
+    public java.util.HashMap<Integer, String> levelSets = new java.util.HashMap<>();
 
     {
         levelSets.put(1,"50ETAR");
