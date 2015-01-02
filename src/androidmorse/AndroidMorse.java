@@ -50,6 +50,24 @@ public class AndroidMorse {
     private byte[] constructionOnePCM;
     private byte[] constructionTwoPCM;
 
+    
+    @SuppressWarnings("FieldMayBeFinal")
+    private java.util.HashMap<Integer, String> levelSets = new java.util.HashMap<>();
+
+    {
+        levelSets.put(1,"50ETAR");
+        levelSets.put(2,"SLUQJH");
+        levelSets.put(3,"ONCVIB");
+        levelSets.put(4,"YPWKZM");
+        levelSets.put(5,"DFXG?1");
+        levelSets.put(6,"/34678");
+        levelSets.put(7,"9?/?WX");
+    }
+    
+    //
+    /*
+    
+    */
     @SuppressWarnings("FieldMayBeFinal")
     private java.util.HashMap<Character, String> morseDictionary = new java.util.HashMap<>();
 
