@@ -58,10 +58,12 @@ public class AndroidMorse {
         levelSets.put(1,"50ETAR");
         levelSets.put(2,"SLUQJH");
         levelSets.put(3,"ONCVIB");
-        levelSets.put(4,"YPWKZM");
-        levelSets.put(5,"DFXG?1");
-        levelSets.put(6,"/34678");
-        levelSets.put(7,"9?/?WX");
+        levelSets.put(4,"50ETARSLUQJHONCVIB"); //REVIEW LEVEL
+        levelSets.put(5,"YPWKZM");
+        levelSets.put(6,"DFXG?1");
+        levelSets.put(7,"/34678");
+        levelSets.put(8,"YPWKZMDFG?1/34678");//REVIEW LEVEL
+        levelSets.put(9,"&$\'\";:");
     }
     
     //
@@ -110,11 +112,23 @@ public class AndroidMorse {
         morseDictionary.put('9', "----.");
         morseDictionary.put('?', "..--..");
         morseDictionary.put('!', ".-.-");
-        morseDictionary.put('(', "--..--");
-        morseDictionary.put(')', ".........");
+        morseDictionary.put('(', "-.--.");
+        morseDictionary.put(')', "-.--.-");
         morseDictionary.put(' ', " ");
         morseDictionary.put('@', ".--.-.");
         morseDictionary.put('/', "-..-.");
+        morseDictionary.put('.', ".-.-.-");
+        morseDictionary.put(',', "--..--");
+        morseDictionary.put('&',"._...");
+        morseDictionary.put(':',"---..." );
+        morseDictionary.put(';',"-.-.-." );
+        morseDictionary.put('=',"-...-");
+        morseDictionary.put('+',".-.-.");
+        morseDictionary.put('-',"-....-");
+        morseDictionary.put('\'', ".----.");
+        morseDictionary.put('\"', ".-..-.");
+        //TODO need " and ' characters added to dictionary
+        
 //finish fixing dictionary
 //add that one command to convert it to unchangeable.....whatever it was called...
     }
@@ -129,6 +143,7 @@ public class AndroidMorse {
 
     public AndroidMorse(int WPM, String stringToAudio) {
         MorseElements(WPM, 13, false, 800);
+        this.mWordsPerMinute = WPM;
         mc.mWPM= WPM;
         //mc.mFarnsEnabled = FarnsworthEnabled;
        // mc.mFarnsWPM= FarnsWorthWPM;
@@ -139,7 +154,24 @@ public class AndroidMorse {
 
     public AndroidMorse(int WPM, boolean FarnsworthEnabled, int FarnsWorthWPM, String stringToAudio) {
         //TODO elements need to be intialized first!
-        
+        this.mWordsPerMinute = WPM;
+        this.farnsworthSpacing = FarnsworthEnabled;
+        this.mFarnsWPM = FarnsWorthWPM;
+        MorseElements(WPM, FarnsWorthWPM, FarnsworthEnabled, 800);
+        mc.mWPM= WPM;
+        mc.mFarnsEnabled = FarnsworthEnabled;
+        mc.mFarnsWPM= FarnsWorthWPM;
+        mc.stringToPlay = stringToAudio;
+        mc.waveByteArray = byteWaveMorse(mc);
+        this.morseWaveByteArray = this.mc.waveByteArray;
+    }
+    
+    public AndroidMorse(int WPM, boolean FarnsworthEnabled, int FarnsWorthWPM, int freqHz,  String stringToAudio) {
+        //TODO elements need to be intialized first!
+        this.mfreqInHz = (short)freqHz;
+        this.mWordsPerMinute = WPM;
+        this.farnsworthSpacing = FarnsworthEnabled;
+        this.mFarnsWPM = FarnsWorthWPM;
         MorseElements(WPM, FarnsWorthWPM, FarnsworthEnabled, 800);
         mc.mWPM= WPM;
         mc.mFarnsEnabled = FarnsworthEnabled;
