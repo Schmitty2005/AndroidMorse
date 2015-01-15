@@ -12,7 +12,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 
 /**
- *
+ * 
  * @author bill
  */
 public class AndroidMorse {
@@ -42,7 +42,7 @@ public class AndroidMorse {
     private int mWordsPerMinute = 18;
     @SuppressWarnings("FieldMayBeFinal")
     
-    private short mfreqInHz = 500;
+    private short mfreqInHz = 600;
     //private int sample_rate = 44100;
     final private int sample_rate = 16000;
     @SuppressWarnings("FieldMayBeFinal")
@@ -64,12 +64,9 @@ public class AndroidMorse {
         levelSets.put(7,"/34678");
         levelSets.put(8,"YPWKZMDFG?1/34678");//REVIEW LEVEL
         levelSets.put(9,"&$\'\";:");
+        levelSets.put(10, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?&$;:\'\"");
     }
-    
-    //
-    /*
-    
-    */
+   
     @SuppressWarnings("FieldMayBeFinal")
     private java.util.HashMap<Character, String> morseDictionary = new java.util.HashMap<>();
 
@@ -140,7 +137,11 @@ public class AndroidMorse {
         //MorseWave mw = new MorseWave(mContainer);
 
     }
-
+/**
+ * 
+ * @param WPM
+ * @param stringToAudio 
+ */
     public AndroidMorse(int WPM, String stringToAudio) {
         MorseElements(WPM, 13, false, 800);
         this.mWordsPerMinute = WPM;
@@ -151,7 +152,13 @@ public class AndroidMorse {
         mc.waveByteArray = byteWaveMorse(mc);
         this.morseWaveByteArray = this.mc.waveByteArray;
     }
-
+/**
+ * 
+ * @param WPM
+ * @param FarnsworthEnabled
+ * @param FarnsWorthWPM
+ * @param stringToAudio 
+ */
     public AndroidMorse(int WPM, boolean FarnsworthEnabled, int FarnsWorthWPM, String stringToAudio) {
         //TODO elements need to be intialized first!
         this.mWordsPerMinute = WPM;
@@ -165,7 +172,14 @@ public class AndroidMorse {
         mc.waveByteArray = byteWaveMorse(mc);
         this.morseWaveByteArray = this.mc.waveByteArray;
     }
-    
+   /**
+    * 
+    * @param WPM Speed of morse code in desired audio in words per minute
+    * @param FarnsworthEnabled Farnsworth spacing enabled true or false.
+    * @param FarnsWorthWPM Spacing of desired farnsworth speed
+    * @param freqHz Tone in Hertz of morse code
+    * @param stringToAudio String to convert to morse code audio.
+    */ 
     public AndroidMorse(int WPM, boolean FarnsworthEnabled, int FarnsWorthWPM, int freqHz,  String stringToAudio) {
         //TODO elements need to be intialized first!
         this.mfreqInHz = (short)freqHz;
@@ -201,14 +215,11 @@ public class AndroidMorse {
     }
 
     private static void writeInt(ByteBuffer buffer, int intToUnsign) {
-//TODO add suppress warning here
+
         buffer.put((byte) (intToUnsign));
         buffer.put((byte) (intToUnsign >> 8));
         buffer.put((byte) (intToUnsign >> 16));
         buffer.put((byte) (intToUnsign >> 24));
-        //out.write(val >> 8);
-        //out.write(val >> 16);
-        //out.write(val >> 24);
     }
 
     /**
@@ -222,8 +233,7 @@ public class AndroidMorse {
      * data attached.
      */
     private static byte[] createWaveHeaderForPcm(byte[] pcmData, int sampleRate, short bitsPerSample) {
-//TODO something isnt working right in this!        
-//Initialize variables for wave header
+
         short numberChannels = 1;  // number of channels
         int byteRate = sampleRate * numberChannels * bitsPerSample / 8;
         short blockAlign = (short) (numberChannels * bitsPerSample / 8);
@@ -238,9 +248,8 @@ public class AndroidMorse {
             pcmLength++;
             pcmLength++;
         }  //wave files must have an even number of bytes!
-        System.out.println("waveLength Value : " + waveLength);
+        //System.out.println("waveLength Value : " + waveLength);
         ByteBuffer waveBuffer = ByteBuffer.allocate(pcmLength + 44);
-        //byte[] completeWave = new byte[pcmLength + 44];
         waveBuffer.position(0);
         //Set to Big Endian for RIFF
         waveBuffer.order(ByteOrder.BIG_ENDIAN);
@@ -252,7 +261,7 @@ public class AndroidMorse {
         //Set to Little Endian for ChunkSize
         waveBuffer.order(ByteOrder.LITTLE_ENDIAN);
         //write Int Subchunk size
-        waveBuffer.putInt(36 + subChunk2Size); //Should be calculated properly...This is jjust for testing
+        waveBuffer.putInt(36 + subChunk2Size); 
         //Set to Big Endian for WAVE
         waveBuffer.order(ByteOrder.BIG_ENDIAN);
         //write ASCII 'WAVE' to Byte Buffer
@@ -331,7 +340,7 @@ public class AndroidMorse {
     private static byte[] createSinePCM(short freq, short duration_ms, short volume_percent, int sampleRate) //@TODO all these parameters should be changed to doubles.
     {
 
-        double maxAmplitude_16bit = 32767;
+       // double maxAmplitude_16bit = 32767;
         short waveAmptude_16bit = 28800; // test value of volume! 0 to 32767 value
         double calculate;
         double calcSlices = (double) duration_ms / 1000D * (double) sampleRate;
@@ -387,7 +396,6 @@ public class AndroidMorse {
     private void MorseElements(int wordsPerMinute, int farnsWPM, boolean boolSpacing, int freqHz) {
 
 //@TODO possibly make these multithreaded in the future!
-        //Sound_Timing timing = new Sound_Timing(wordsPerMinute, farnsWPM, boolSpacing);
         calculateSpacing(mWordsPerMinute);
         constructionOnePCM = createSinePCM((short) mfreqInHz, (short) dit_length, (short) 0, sample_rate);
         createHannWindow(constructionOnePCM, 0.004F, sample_rate);
@@ -413,15 +421,13 @@ public class AndroidMorse {
     }
 
     private byte[] byteWaveMorse(MorseContainer mc) {
-//@TODO code to play string in morse :)
-        //@TODO NEEDS ByteArrayOutpuStream to work!
+
         ByteArrayOutputStream bbout = new ByteArrayOutputStream();
         String playString = mc.stringToPlay;
         char charToPlay;
         int sLength = playString.length();
         byte[] playWave = new byte[32];
-        //byte[]  constructionOne;
-        //ByteBuffer bb = ByteBuffer.wrap(playWave);
+
         for (int step = 0; step < sLength; step++) {
             charToPlay = playString.charAt(step);
             if (charToPlay == ' ') {
@@ -429,7 +435,7 @@ public class AndroidMorse {
 
             } else {
                 if (farnsworthSpacing) {
-//@TODO code to insert farnsworth spaced silence
+
                     bbout.write(combineByteArray(playWave, interCharacterFarnsworthPCM), 0, interCharacterFarnsworthPCM.length);
                 } else {
                     try {
@@ -437,8 +443,6 @@ public class AndroidMorse {
                     } catch (IOException e) {
                         System.err.println("e");
                     }
-
-                    //playWave = constructionOne;
                 }
             }
             char toLower = Character.toLowerCase(charToPlay);
@@ -453,19 +457,17 @@ public class AndroidMorse {
                     } catch (IOException e) {
                         System.err.println(e);
                     }
-
                 }
+                
+                
                 if (ditOrDah == '-') {
                     try {
                         bbout.write(combineByteArray(playWave, dahElementPCM));
                     } catch (IOException e) {
                         System.err.println(e);
                     }
-
                 }
-
             }
-
         }
 
         playWave = bbout.toByteArray();
@@ -478,9 +480,5 @@ public class AndroidMorse {
        // AndroidMorse morse = new AndroidMorse(18, true, 13, "poop test");
         //AndroidMorse tester = new AndroidMorse(12,"test string");
         //byte tested [] = tester.morseWaveByteArray;
-        
-        
-        
     }
-
 }
