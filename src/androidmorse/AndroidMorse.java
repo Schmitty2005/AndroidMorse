@@ -4,12 +4,15 @@
  * and open the template in the editor.
  */
 package androidmorse;
-//import java.io.*;
+//TODO may need to remove file saving routine if android OS does not permit without permissions.
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+
 
 /**
  * 
@@ -55,18 +58,33 @@ public class AndroidMorse {
     public java.util.HashMap<Integer, String> levelSets = new java.util.HashMap<>();
 
     {
-        levelSets.put(1,"50ETAR");
-        levelSets.put(2,"SLUQJH");
-        levelSets.put(3,"ONCVIB");
-        levelSets.put(4,"50ETARSLUQJHONCVIB"); //REVIEW LEVEL
-        levelSets.put(5,"YPWKZM");
-        levelSets.put(6,"DFXG?1");
-        levelSets.put(7,"/34678");
-        levelSets.put(8,"YPWKZMDFG?1/34678");//REVIEW LEVEL
-        levelSets.put(9,"&$\'\";:");
-        levelSets.put(10, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?&$;:\'\"");
+        levelSets.put(0,"50ETAR");
+        levelSets.put(1,"SLUQJH");
+        levelSets.put(2,"ONCVIB");
+        levelSets.put(3,"50ETARSLUQJHONCVIB"); //REVIEW LEVEL
+        levelSets.put(4,"YPWKZM");
+        levelSets.put(5,"DFXG?1");
+        levelSets.put(6,"/34678");
+        levelSets.put(7,"YPWKZMDFG?1/34678");//REVIEW LEVEL
+        levelSets.put(8,"&$\'\";:");
+        levelSets.put(9, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?&$;:\'\"");  // all characters level
     }
    
+    public java.util.HashMap<String, String> prosigns = new java.util.HashMap<>();
+
+    {
+        prosigns.put("AA",".-.-");
+        prosigns.put("AR",".-.-.");
+        prosigns.put("AS",".-...");
+        prosigns.put("BK","-...-.-"); 
+        prosigns.put("BT","-...-");
+        prosigns.put("CL","-.-..-..");
+        prosigns.put("CT","-.-.-");
+        prosigns.put("DO","-..---");
+        prosigns.put("KN","-.--.");
+        prosigns.put("SK", "...-.-"); 
+        prosigns.put("SN","...-.");
+    }
     @SuppressWarnings("FieldMayBeFinal")
     private java.util.HashMap<Character, String> morseDictionary = new java.util.HashMap<>();
 
@@ -146,8 +164,6 @@ public class AndroidMorse {
         MorseElements(WPM, 13, false, 800);
         this.mWordsPerMinute = WPM;
         mc.mWPM= WPM;
-        //mc.mFarnsEnabled = FarnsworthEnabled;
-       // mc.mFarnsWPM= FarnsWorthWPM;
         mc.stringToPlay = stringToAudio;
         mc.waveByteArray = byteWaveMorse(mc);
         this.morseWaveByteArray = this.mc.waveByteArray;
@@ -427,25 +443,36 @@ public class AndroidMorse {
         char charToPlay;
         int sLength = playString.length();
         byte[] playWave = new byte[32];
-
+        boolean bProsign = false;
+        
         for (int step = 0; step < sLength; step++) {
+             //TODO need switch here for '^' symbol to turn on/off space between characters for prosigns!
             charToPlay = playString.charAt(step);
+            if (charToPlay == '^') {bProsign = !bProsign; step++;}
+            charToPlay = playString.charAt(step);
+           
+            
             if (charToPlay == ' ') {
                 bbout.write(combineByteArray(playWave, interWordSpacingPCM), 0, interWordSpacingPCM.length);
 
             } else {
-                if (farnsworthSpacing) {
+                
+                //TODO need switch for '^' character for spacing
+                if (farnsworthSpacing & !bProsign) {
 
                     bbout.write(combineByteArray(playWave, interCharacterFarnsworthPCM), 0, interCharacterFarnsworthPCM.length);
                 } else {
                     try {
-                        bbout.write(combineByteArray(playWave, interCharacterPCM));
+                        
+                       if (!bProsign) bbout.write(combineByteArray(playWave, interCharacterPCM));
                     } catch (IOException e) {
                         System.err.println("e");
                     }
                 }
             }
             char toLower = Character.toLowerCase(charToPlay);
+            
+            //TODO need to throw exception here if character is not in dictionary
             String morseString = morseDictionary.get(toLower);
 
             for (int x = 0; x < (morseString.length()); x++) {
@@ -477,8 +504,41 @@ public class AndroidMorse {
     }
     
     public static void main(String[] args) {
-       // AndroidMorse morse = new AndroidMorse(18, true, 13, "poop test");
-        //AndroidMorse tester = new AndroidMorse(12,"test string");
-        //byte tested [] = tester.morseWaveByteArray;
+        //AndroidMorse morse = new AndroidMorse(18, true, 13, "^sk^ TEST ^sk^ ");
+        ////AndroidMorse tester = new AndroidMorse(12,"test string");
+        ////byte tested [] = tester.morseWaveByteArray;
+        //saveToWaveFile(morse.morseWaveByteArray, "prosigntest.wav");
     }
+    
+    public static void saveToWaveFile(byte[] waveByteArray, String filename) {
+        FileOutputStream fileOutput = null;
+        File fileToSave;
+
+        try {
+
+            fileToSave = new File(filename);
+            fileOutput = new FileOutputStream(fileToSave);
+
+            // if file doesnt exists, then create it
+            if (!fileToSave.exists()) {
+                fileToSave.createNewFile();
+            }
+            fileOutput.write(waveByteArray);
+            fileOutput.flush();
+            fileOutput.close();
+
+            System.out.println("File saved as : "+ filename);
+
+        } catch (IOException e) {
+        } finally {
+            try {
+                if (fileOutput != null) {
+                    fileOutput.close();
+                }
+            } catch (IOException e) {
+            }
+        }
+
+    }
+
 }
