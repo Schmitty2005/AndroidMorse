@@ -66,8 +66,8 @@ public class AndroidMorse {
         levelSets.put(6,"DFXG?1");
         levelSets.put(7,"/34678");
         levelSets.put(8,"YPWKZMDFG?1/34678");//REVIEW LEVEL
-        levelSets.put(9,"&$\'\";:");
-        levelSets.put(10, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?&$;:\'\"");  // all characters level
+        levelSets.put(9,"&@\'\";:");
+        levelSets.put(10, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?&@;:\'\"");  // all characters level
     }
    
     public java.util.HashMap<String, String> prosigns = new java.util.HashMap<>();
@@ -142,6 +142,7 @@ public class AndroidMorse {
         morseDictionary.put('-',"-....-");
         morseDictionary.put('\'', ".----.");
         morseDictionary.put('\"', ".-..-.");
+        morseDictionary.put ('$', "");
         //TODO need " and ' characters added to dictionary
         
 //finish fixing dictionary
@@ -505,9 +506,9 @@ public class AndroidMorse {
     
     public static void main(String[] args) {
         //AndroidMorse morse = new AndroidMorse(18, true, 13, "^sk^ TEST ^sk^ ");
-        ////AndroidMorse tester = new AndroidMorse(12,"test string");
-        ////byte tested [] = tester.morseWaveByteArray;
-        //saveToWaveFile(morse.morseWaveByteArray, "prosigntest.wav");
+        AndroidMorse tester = new AndroidMorse(12,"' \" & : ; ");
+        byte tested [] = tester.morseWaveByteArray;
+        saveToWaveFile(tester.morseWaveByteArray, "specialCharTest.wav");
     }
     
     public static void saveToWaveFile(byte[] waveByteArray, String filename) {
