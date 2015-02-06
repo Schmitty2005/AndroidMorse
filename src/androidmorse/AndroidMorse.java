@@ -58,16 +58,16 @@ public class AndroidMorse {
     public java.util.HashMap<Integer, String> levelSets = new java.util.HashMap<>();
 
     {
-        levelSets.put(0,"50ETAR");
-        levelSets.put(1,"SLUQJH");
-        levelSets.put(2,"ONCVIB");
-        levelSets.put(3,"50ETARSLUQJHONCVIB"); //REVIEW LEVEL
-        levelSets.put(4,"YPWKZM");
-        levelSets.put(5,"DFXG?1");
-        levelSets.put(6,"/34678");
-        levelSets.put(7,"YPWKZMDFG?1/34678");//REVIEW LEVEL
-        levelSets.put(8,"&$\'\";:");
-        levelSets.put(9, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?&$;:\'\"");  // all characters level
+        levelSets.put(1,"50ETAR");
+        levelSets.put(2,"SLUQJH");
+        levelSets.put(3,"ONCVIB");
+        levelSets.put(4,"50ETARSLUQJHONCVIB"); //REVIEW LEVEL
+        levelSets.put(5,"YPWKZM");
+        levelSets.put(6,"DFXG?1");
+        levelSets.put(7,"/34678");
+        levelSets.put(8,"YPWKZMDFG?1/34678");//REVIEW LEVEL
+        levelSets.put(9,"&$\'\";:");
+        levelSets.put(10, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?&$;:\'\"");  // all characters level
     }
    
     public java.util.HashMap<String, String> prosigns = new java.util.HashMap<>();
