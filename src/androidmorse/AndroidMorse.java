@@ -19,200 +19,6 @@ import java.nio.ByteOrder;
  */
 public class AndroidMorse {
 
-    private double dit_length;
-    private double dah_length;
-    private double interElementSpacing;
-    private double interCharacterSpacing_normal;
-    private double interCharacterSpacing_farnsworth;
-    private double interWordSpacing;
-    private boolean farnsworthSpacing;//= false;
-
-    @SuppressWarnings("FieldMayBeFinal")
-    private double farnsworthWPM = 13;
-
-    private byte[] ditElementPCM;
-    private byte[] dahElementPCM;
-    private byte[] interCharacterPCM;
-    private byte[] interCharacterFarnsworthPCM;
-    private byte[] interWordSpacingPCM;
-
-    public byte[] morseWaveByteArray;
-
-    MorseContainer mc = new MorseContainer();
-
-    @SuppressWarnings("FieldMayBeFinal")
-    private int mWordsPerMinute = 18;
-    @SuppressWarnings("FieldMayBeFinal")
-
-    private short mfreqInHz = 600;
-    //private int sample_rate = 44100;
-    final private int sample_rate = 16000;
-    @SuppressWarnings("FieldMayBeFinal")
-    private int mFarnsWPM = 12;
-    private byte[] constructionOnePCM;
-    private byte[] constructionTwoPCM;
-
-    @SuppressWarnings("FieldMayBeFinal")
-    public java.util.HashMap<Integer, String> levelSets = new java.util.HashMap<>();
-
-    {
-        levelSets.put(1, "50ETAR");
-        levelSets.put(2, "SLUQJH");
-        levelSets.put(3, "ONCVIB");
-        levelSets.put(4, "50ETARSLUQJHONCVIB"); //REVIEW LEVEL
-        levelSets.put(5, "YPWKZM");
-        levelSets.put(6, "DFXG?1");
-        levelSets.put(7, "/34678");
-        levelSets.put(8, "YPWKZMDFG?1/34678");//REVIEW LEVEL
-        levelSets.put(9, "&@\'\";:");
-        levelSets.put(10, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?&@;:\'\"");  // all characters level
-    }
-
-    public java.util.HashMap<String, String> prosigns = new java.util.HashMap<>();
-
-    {
-        prosigns.put("AA", ".-.-");
-        prosigns.put("AR", ".-.-.");
-        prosigns.put("AS", ".-...");
-        prosigns.put("BK", "-...-.-");
-        prosigns.put("BT", "-...-");
-        prosigns.put("CL", "-.-..-..");
-        prosigns.put("CT", "-.-.-");
-        prosigns.put("DO", "-..---");
-        prosigns.put("KN", "-.--.");
-        prosigns.put("SK", "...-.-");
-        prosigns.put("SN", "...-.");
-    }
-    @SuppressWarnings("FieldMayBeFinal")
-    private java.util.HashMap<Character, String> morseDictionary = new java.util.HashMap<>();
-
-    {
-        morseDictionary.put('a', ".-");
-        morseDictionary.put('b', "-...");
-        morseDictionary.put('c', "-.-.");
-        morseDictionary.put('d', "-..");
-        morseDictionary.put('e', ".");
-        morseDictionary.put('f', "..-.");
-        morseDictionary.put('g', "--.");
-        morseDictionary.put('h', "....");
-        morseDictionary.put('i', "..");
-        morseDictionary.put('j', ".---");
-        morseDictionary.put('k', "-.-");
-        morseDictionary.put('l', ".-..");
-        morseDictionary.put('m', "--");
-        morseDictionary.put('n', "-.");
-        morseDictionary.put('o', "---");
-        morseDictionary.put('p', ".--.");
-        morseDictionary.put('q', "--.-");
-        morseDictionary.put('r', ".-.");
-        morseDictionary.put('s', "...");
-        morseDictionary.put('t', "-");
-        morseDictionary.put('u', "..-");
-        morseDictionary.put('v', "...-");
-        morseDictionary.put('w', ".--");
-        morseDictionary.put('x', "-..-");
-        morseDictionary.put('y', "-.--");
-        morseDictionary.put('z', "--..");
-        morseDictionary.put('0', "-----");
-        morseDictionary.put('1', ".----");
-        morseDictionary.put('2', "..---");
-        morseDictionary.put('3', "...--");
-        morseDictionary.put('4', "....-");
-        morseDictionary.put('5', ".....");
-        morseDictionary.put('6', "-....");
-        morseDictionary.put('7', "--...");
-        morseDictionary.put('8', "---..");
-        morseDictionary.put('9', "----.");
-        morseDictionary.put('?', "..--..");
-        morseDictionary.put('!', ".-.-");
-        morseDictionary.put('(', "-.--.");
-        morseDictionary.put(')', "-.--.-");
-        morseDictionary.put(' ', " ");
-        morseDictionary.put('@', ".--.-.");
-        morseDictionary.put('/', "-..-.");
-        morseDictionary.put('.', ".-.-.-");
-        morseDictionary.put(',', "--..--");
-        morseDictionary.put('&', "._...");
-        morseDictionary.put(':', "---...");
-        morseDictionary.put(';', "-.-.-.");
-        morseDictionary.put('=', "-...-");
-        morseDictionary.put('+', ".-.-.");
-        morseDictionary.put('-', "-....-");
-        morseDictionary.put('\'', ".----.");
-        morseDictionary.put('\"', ".-..-.");
-        morseDictionary.put('$', "");
-        //TODO need " and ' characters added to dictionary
-
-//finish fixing dictionary
-//add that one command to convert it to unchangeable.....whatever it was called...
-    }
-
-    MorseContainer mContainer = new MorseContainer();
-
-    public void setString(String mStringToPlay) {
-        mContainer.stringToPlay = mStringToPlay;
-        //MorseWave mw = new MorseWave(mContainer);
-
-    }
-
-    /**
-     *
-     * @param WPM
-     * @param stringToAudio
-     */
-    public AndroidMorse(int WPM, String stringToAudio) {
-        MorseElements(WPM, 13, false, 800);
-        this.mWordsPerMinute = WPM;
-        mc.mWPM = WPM;
-        mc.stringToPlay = stringToAudio;
-        mc.waveByteArray = byteWaveMorse(mc);
-        this.morseWaveByteArray = this.mc.waveByteArray;
-    }
-
-    /**
-     *
-     * @param WPM
-     * @param FarnsworthEnabled
-     * @param FarnsWorthWPM
-     * @param stringToAudio
-     */
-    public AndroidMorse(int WPM, boolean FarnsworthEnabled, int FarnsWorthWPM, String stringToAudio) {
-        //TODO elements need to be intialized first!
-        this.mWordsPerMinute = WPM;
-        this.farnsworthSpacing = FarnsworthEnabled;
-        this.mFarnsWPM = FarnsWorthWPM;
-        MorseElements(WPM, FarnsWorthWPM, FarnsworthEnabled, 800);
-        mc.mWPM = WPM;
-        mc.mFarnsEnabled = FarnsworthEnabled;
-        mc.mFarnsWPM = FarnsWorthWPM;
-        mc.stringToPlay = stringToAudio;
-        mc.waveByteArray = byteWaveMorse(mc);
-        this.morseWaveByteArray = this.mc.waveByteArray;
-    }
-
-    /**
-     *
-     * @param WPM Speed of morse code in desired audio in words per minute
-     * @param FarnsworthEnabled Farnsworth spacing enabled true or false.
-     * @param FarnsWorthWPM Spacing of desired farnsworth speed
-     * @param freqHz Tone in Hertz of morse code
-     * @param stringToAudio String to convert to morse code audio.
-     */
-    public AndroidMorse(int WPM, boolean FarnsworthEnabled, int FarnsWorthWPM, int freqHz, String stringToAudio) {
-        //TODO elements need to be intialized first!
-        this.mfreqInHz = (short) freqHz;
-        this.mWordsPerMinute = WPM;
-        this.farnsworthSpacing = FarnsworthEnabled;
-        this.mFarnsWPM = FarnsWorthWPM;
-        MorseElements(WPM, FarnsWorthWPM, FarnsworthEnabled, 800);
-        mc.mWPM = WPM;
-        mc.mFarnsEnabled = FarnsworthEnabled;
-        mc.mFarnsWPM = FarnsWorthWPM;
-        mc.stringToPlay = stringToAudio;
-        mc.waveByteArray = byteWaveMorse(mc);
-        this.morseWaveByteArray = this.mc.waveByteArray;
-    }
-
     /**
      * combineByteArray simply combines the first and the second byte array as
      * one.
@@ -224,16 +30,15 @@ public class AndroidMorse {
     private static byte[] combineByteArray(byte[] firstByte, byte[] secondByte) {
         byte[] combinedArray = new byte[(firstByte.length + secondByte.length)];
         ByteBuffer bb = ByteBuffer.wrap(combinedArray);
-
+        
         bb.position(0);
         bb.put(firstByte);
         bb.put(secondByte);
-
+        
         return combinedArray;
     }
 
     private static void writeInt(ByteBuffer buffer, int intToUnsign) {
-
         buffer.put((byte) (intToUnsign));
         buffer.put((byte) (intToUnsign >> 8));
         buffer.put((byte) (intToUnsign >> 16));
@@ -251,7 +56,6 @@ public class AndroidMorse {
      * data attached.
      */
     private static byte[] createWaveHeaderForPcm(byte[] pcmData, int sampleRate, short bitsPerSample) {
-
         short numberChannels = 1;  // number of channels
         int byteRate = sampleRate * numberChannels * bitsPerSample / 8;
         short blockAlign = (short) (numberChannels * bitsPerSample / 8);
@@ -320,16 +124,15 @@ public class AndroidMorse {
      * @param sampleRate Sample rate of PCM data Byte Array
      */
     private static void createHannWindow(byte[] pcmData, float fadeTime, int sampleRate) {
-
         ByteBuffer bb = ByteBuffer.wrap(pcmData);
-
+        
         bb.asShortBuffer();
         bb.order(ByteOrder.LITTLE_ENDIAN);
-
+        
         // Calculate duration, in samples, of fade time
         double numFadeSamples = fadeTime * sampleRate;
         short sliceValue;
-
+        
         for (int s = 0; s < numFadeSamples; s++) {
             // Calculate weight based on Hann 'raised cosine' window
             float weight = 0.5f * ((float) ((1 - ((float) Math.cos((float) Math.PI * (float) s / (float) (numFadeSamples))))));
@@ -339,9 +142,9 @@ public class AndroidMorse {
             //Fade Out
             sliceValue = bb.getShort((pcmData.length - 2 - (2 * s)));
             bb.putShort((pcmData.length - (s * 2) - 2), (short) (sliceValue * weight));  // Fade Out
-
+            
         }
-
+        
         //This code is in C for a hann window
         //http://www.labbookpages.co.uk/audio/wavGenFunc.html#tone
     }
@@ -357,7 +160,6 @@ public class AndroidMorse {
      */
     private static byte[] createSinePCM(short freq, short duration_ms, short volume_percent, int sampleRate) //@TODO all these parameters should be changed to doubles.
     {
-
         // double maxAmplitude_16bit = 32767;
         short waveAmptude_16bit = 28800; // test value of volume! 0 to 32767 value
         double calculate;
@@ -376,7 +178,6 @@ public class AndroidMorse {
         byte[] bytePCMsine = bb.array();
 
         return bytePCMsine;
-
     }
 
     /**
@@ -387,11 +188,10 @@ public class AndroidMorse {
      * @return An Output Stream is returned
      */
     private static byte[] createSilencePCM(double duration_ms, double sampleRate) {
-
         ByteBuffer bb = ByteBuffer.allocate((int) (duration_ms / 1000 * sampleRate) * 2);
         bb.asShortBuffer();
         bb.position(0);
-
+        
         for (int slice = 0; slice < ((int) (duration_ms / 1000 * sampleRate)) - 2; slice++) {
             bb.putShort((short) 0);
         }
@@ -399,6 +199,238 @@ public class AndroidMorse {
         bytePCMsilence = bb.array();
 
         return bytePCMsilence;
+    }
+    
+    public static void main(String[] args) {
+        //AndroidMorse morse = new AndroidMorse(18, true, 13, "^sk^ TEST ^sk^ ");
+        AndroidMorse tester = new AndroidMorse(12, "ke7gbt CQ CQ CQ ^SK^ CQ CQ CQ");
+        byte tested[] = tester.morseWaveByteArray;
+        //saveToWaveFile(tester.morseWaveByteArray, "specialCharTest.wav");
+    }
+
+    public static void saveToWaveFile(byte[] waveByteArray, String filename) {
+        FileOutputStream fileOutput = null;
+        File fileToSave;
+        
+        try {
+            
+            fileToSave = new File(filename);
+            fileOutput = new FileOutputStream(fileToSave);
+            
+            // if file doesnt exists, then create it
+            if (!fileToSave.exists()) {
+                fileToSave.createNewFile();
+            }
+            fileOutput.write(waveByteArray);
+            fileOutput.flush();
+            fileOutput.close();
+            
+            System.out.println("File saved as : " + filename);
+            
+        } catch (IOException e) {
+        } finally {
+            try {
+                if (fileOutput != null) {
+                    fileOutput.close();
+                }
+            } catch (IOException e) {
+            }
+        }
+    }
+
+    private double dit_length;
+    private double dah_length;
+    private double interElementSpacing;
+    private double interCharacterSpacing_normal;
+    private double interCharacterSpacing_farnsworth;
+    private double interWordSpacing;
+    private boolean farnsworthSpacing;//= false;
+
+    @SuppressWarnings("FieldMayBeFinal")
+    private double farnsworthWPM = 13;
+
+    private byte[] ditElementPCM;
+    private byte[] dahElementPCM;
+    private byte[] interCharacterPCM;
+    private byte[] interCharacterFarnsworthPCM;
+    private byte[] interWordSpacingPCM;
+
+    public byte[] morseWaveByteArray;
+
+    MorseContainer mc = new MorseContainer();
+
+    @SuppressWarnings("FieldMayBeFinal")
+    private int mWordsPerMinute = 18;
+    @SuppressWarnings("FieldMayBeFinal")
+
+    private short mfreqInHz = 600;
+    //private int sample_rate = 44100;
+    final private int sample_rate = 16000;
+    @SuppressWarnings("FieldMayBeFinal")
+    private int mFarnsWPM = 12;
+    private byte[] constructionOnePCM;
+    private byte[] constructionTwoPCM;
+
+    @SuppressWarnings("FieldMayBeFinal")
+    public java.util.HashMap<Integer, String> levelSets = new java.util.HashMap<>();
+
+
+    public java.util.HashMap<String, String> prosigns = new java.util.HashMap<>();
+
+    @SuppressWarnings("FieldMayBeFinal")
+    private java.util.HashMap<Character, String> morseDictionary = new java.util.HashMap<>();
+    
+    
+    MorseContainer mContainer = new MorseContainer();
+    {
+        levelSets.put(1, "50ETAR");
+        levelSets.put(2, "SLUQJH");
+        levelSets.put(3, "ONCVIB");
+        levelSets.put(4, "50ETARSLUQJHONCVIB"); //REVIEW LEVEL
+        levelSets.put(5, "YPWKZM");
+        levelSets.put(6, "DFXG?1");
+        levelSets.put(7, "/34678");
+        levelSets.put(8, "YPWKZMDFG?1/34678");//REVIEW LEVEL
+        levelSets.put(9, "&@\'\";:");
+        levelSets.put(10, "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789/?&@;:\'\"");  // all characters level
+    }
+    {
+        //TODO change prosign morse code definition to english description of prosign.  Example : "Break", "Silent Key" etc.
+        prosigns.put("AA", ".-.-");
+        prosigns.put("AR", ".-.-.");
+        prosigns.put("AS", ".-...");
+        prosigns.put("BK", "-...-.-");
+        prosigns.put("BT", "-...-");
+        prosigns.put("CL", "-.-..-..");
+        prosigns.put("CT", "-.-.-");
+        prosigns.put("DO", "-..---");
+        prosigns.put("KN", "-.--.");
+        prosigns.put("SK", "...-.-");
+        prosigns.put("SN", "...-.");
+    }
+    {
+        morseDictionary.put('a', ".-");
+        morseDictionary.put('b', "-...");
+        morseDictionary.put('c', "-.-.");
+        morseDictionary.put('d', "-..");
+        morseDictionary.put('e', ".");
+        morseDictionary.put('f', "..-.");
+        morseDictionary.put('g', "--.");
+        morseDictionary.put('h', "....");
+        morseDictionary.put('i', "..");
+        morseDictionary.put('j', ".---");
+        morseDictionary.put('k', "-.-");
+        morseDictionary.put('l', ".-..");
+        morseDictionary.put('m', "--");
+        morseDictionary.put('n', "-.");
+        morseDictionary.put('o', "---");
+        morseDictionary.put('p', ".--.");
+        morseDictionary.put('q', "--.-");
+        morseDictionary.put('r', ".-.");
+        morseDictionary.put('s', "...");
+        morseDictionary.put('t', "-");
+        morseDictionary.put('u', "..-");
+        morseDictionary.put('v', "...-");
+        morseDictionary.put('w', ".--");
+        morseDictionary.put('x', "-..-");
+        morseDictionary.put('y', "-.--");
+        morseDictionary.put('z', "--..");
+        morseDictionary.put('0', "-----");
+        morseDictionary.put('1', ".----");
+        morseDictionary.put('2', "..---");
+        morseDictionary.put('3', "...--");
+        morseDictionary.put('4', "....-");
+        morseDictionary.put('5', ".....");
+        morseDictionary.put('6', "-....");
+        morseDictionary.put('7', "--...");
+        morseDictionary.put('8', "---..");
+        morseDictionary.put('9', "----.");
+        morseDictionary.put('?', "..--..");
+        morseDictionary.put('!', ".-.-");
+        morseDictionary.put('(', "-.--.");
+        morseDictionary.put(')', "-.--.-");
+        morseDictionary.put(' ', " ");
+        morseDictionary.put('@', ".--.-.");
+        morseDictionary.put('/', "-..-.");
+        morseDictionary.put('.', ".-.-.-");
+        morseDictionary.put(',', "--..--");
+        morseDictionary.put('&', "._...");
+        morseDictionary.put(':', "---...");
+        morseDictionary.put(';', "-.-.-.");
+        morseDictionary.put('=', "-...-");
+        morseDictionary.put('+', ".-.-.");
+        morseDictionary.put('-', "-....-");
+        morseDictionary.put('\'', ".----.");
+        morseDictionary.put('\"', ".-..-.");
+        //morseDictionary.put('$', "");
+        //TODO need " and ' characters added to dictionary
+
+//finish fixing dictionary
+//add that one command to convert it to unchangeable.....whatever it was called...
+    }
+
+    /**
+     *
+     * @param WPM
+     * @param stringToAudio
+     */
+    public AndroidMorse(int WPM, String stringToAudio) {
+        MorseElements(WPM, 13, false, 800);
+        this.mWordsPerMinute = WPM;
+        mc.mWPM = WPM;
+        mc.stringToPlay = stringToAudio;
+        mc.waveByteArray = byteWaveMorse(mc);
+        this.morseWaveByteArray = this.mc.waveByteArray;
+    }
+
+    /**
+     *
+     * @param WPM
+     * @param FarnsworthEnabled
+     * @param FarnsWorthWPM
+     * @param stringToAudio
+     */
+    public AndroidMorse(int WPM, boolean FarnsworthEnabled, int FarnsWorthWPM, String stringToAudio) {
+        //TODO elements need to be intialized first!
+        this.mWordsPerMinute = WPM;
+        this.farnsworthSpacing = FarnsworthEnabled;
+        this.mFarnsWPM = FarnsWorthWPM;
+        MorseElements(WPM, FarnsWorthWPM, FarnsworthEnabled, 800);
+        mc.mWPM = WPM;
+        mc.mFarnsEnabled = FarnsworthEnabled;
+        mc.mFarnsWPM = FarnsWorthWPM;
+        mc.stringToPlay = stringToAudio;
+        mc.waveByteArray = byteWaveMorse(mc);
+        this.morseWaveByteArray = this.mc.waveByteArray;
+    }
+
+    /**
+     *
+     * @param WPM Speed of morse code in desired audio in words per minute
+     * @param FarnsworthEnabled Farnsworth spacing enabled true or false.
+     * @param FarnsWorthWPM Spacing of desired farnsworth speed
+     * @param freqHz Tone in Hertz of morse code
+     * @param stringToAudio String to convert to morse code audio.
+     */
+    public AndroidMorse(int WPM, boolean FarnsworthEnabled, int FarnsWorthWPM, int freqHz, String stringToAudio) {
+        //TODO elements need to be intialized first!
+        this.mfreqInHz = (short) freqHz;
+        this.mWordsPerMinute = WPM;
+        this.farnsworthSpacing = FarnsworthEnabled;
+        this.mFarnsWPM = FarnsWorthWPM;
+        MorseElements(WPM, FarnsWorthWPM, FarnsworthEnabled, 800);
+        mc.mWPM = WPM;
+        mc.mFarnsEnabled = FarnsworthEnabled;
+        mc.mFarnsWPM = FarnsWorthWPM;
+        mc.stringToPlay = stringToAudio;
+        mc.waveByteArray = byteWaveMorse(mc);
+        this.morseWaveByteArray = this.mc.waveByteArray;
+    }
+    
+    public void setString(String mStringToPlay) {
+        mContainer.stringToPlay = mStringToPlay;
+        //MorseWave mw = new MorseWave(mContainer);
+
     }
 
     private void calculateSpacing(int wpm) {
@@ -512,40 +544,11 @@ public class AndroidMorse {
         return header;
     }
 
-    public static void main(String[] args) {
-        //AndroidMorse morse = new AndroidMorse(18, true, 13, "^sk^ TEST ^sk^ ");
-        AndroidMorse tester = new AndroidMorse(12, "' \" & : ; # * $");
-        byte tested[] = tester.morseWaveByteArray;
-        saveToWaveFile(tester.morseWaveByteArray, "specialCharTest.wav");
-    }
 
-    public static void saveToWaveFile(byte[] waveByteArray, String filename) {
-        FileOutputStream fileOutput = null;
-        File fileToSave;
+    class MorseWaveThread extends Thread {
 
-        try {
+        public void run() {
 
-            fileToSave = new File(filename);
-            fileOutput = new FileOutputStream(fileToSave);
-
-            // if file doesnt exists, then create it
-            if (!fileToSave.exists()) {
-                fileToSave.createNewFile();
-            }
-            fileOutput.write(waveByteArray);
-            fileOutput.flush();
-            fileOutput.close();
-
-            System.out.println("File saved as : " + filename);
-
-        } catch (IOException e) {
-        } finally {
-            try {
-                if (fileOutput != null) {
-                    fileOutput.close();
-                }
-            } catch (IOException e) {
-            }
         }
 
     }
