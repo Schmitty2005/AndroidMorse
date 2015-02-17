@@ -354,7 +354,7 @@ public class AndroidMorse {
         morseDictionary.put('/', "-..-.");
         morseDictionary.put('.', ".-.-.-");
         morseDictionary.put(',', "--..--");
-        morseDictionary.put('&', "._...");
+        morseDictionary.put('&', ".-...");
         morseDictionary.put(':', "---...");
         morseDictionary.put(';', "-.-.-.");
         morseDictionary.put('=', "-...-");
